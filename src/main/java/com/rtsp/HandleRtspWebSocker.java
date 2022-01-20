@@ -1,32 +1,34 @@
 package com.rtsp;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class HandleRtspWebSocker implements IHandleWebSocket  {
 
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("Rtsp Sesson start:" + session.getId());
+        log.info("Rtsp Sesson start:" + session.getId());
     }
     public void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         ByteBuffer bb = message.getPayload();
         byte[] data = bb.array();
-        System.out.println("Recv from RTP session:[" + session.getId() + "]\r\n" + new String(data));
+        log.info("Recv from RTP session:[" + session.getId() + "]\r\n" + new String(data));
     }
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
             String str_msg = message.getPayload();
-            System.out.println("Recv from RTSP session:[" + session.getId() + "]\r\n" + str_msg);
+            log.info("Recv from RTSP session:[" + session.getId() + "]\r\n" + str_msg);
 
             SessionInfo sessionInfo = SessionInfo.get(session.getId());
             if (sessionInfo == null) {
@@ -61,7 +63,7 @@ public class HandleRtspWebSocker implements IHandleWebSocket  {
                         + "seq: " + seq + "\r\n"
                         + "\r\n";
                 session.sendMessage(new TextMessage(s));
-                System.out.println("[Send to RTSP Channel]\r\n" + s);
+                log.info("[Send to RTSP Channel]\r\n" + s);
                 return;
             } else {
                 sessionInfo.getLocalRtspService().recvMsg(str_msg);
@@ -74,7 +76,7 @@ public class HandleRtspWebSocker implements IHandleWebSocket  {
         if(sessionInfo != null) {
             SessionInfo.remove(session.getId());
             sessionInfo.close();
-            System.out.println("RTSP Sesson closed:" + session.getId());
+            log.info("RTSP Sesson closed:" + session.getId());
         }
     }
 }

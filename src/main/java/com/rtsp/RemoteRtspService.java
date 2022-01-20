@@ -2,6 +2,8 @@ package com.rtsp;
 
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Slf4j
 public class RemoteRtspService {
     private final static byte[] RES_HEAD = "RTSP/1.0 200 OK\r\n".getBytes();
     private final static String[] OP_NAME = {
@@ -141,7 +144,7 @@ public class RemoteRtspService {
                                     break;
                                 rtpDateLen = (buff[3] & 0x0FF) + (buff[2] & 0xFF) * 0x100;
                                 if(rtpDateLen < 0) {
-                                    System.out.println("Error data");
+                                    log.info("Error data");
                                 }
                                 if(rtpDateLen > (buff.length - 4)) {
                                     //Adjust buff size
@@ -155,7 +158,7 @@ public class RemoteRtspService {
                                     offset += minLen;
                                     buffLen += minLen;
                                 } else {
-                                    System.out.println("Error data");
+                                    log.info("Error data");
                                 }
                                 if(rtpDateLen == (buffLen - 4)) {
                                     byte[] d = new byte[buffLen];
@@ -238,7 +241,7 @@ public class RemoteRtspService {
             } catch(Exception e) {
             }
             inputStream = null;
-            System.out.println("RemoteRecvThread Is Down!");
+            log.info("RemoteRecvThread Is Down!");
             try {
                 EventItem eventItem = new EventItem();
                 eventItem.eventType = EventItem.EVT_STOP;
@@ -261,7 +264,7 @@ public class RemoteRtspService {
                             //1.如果是重定向，则重连socket
                             //2.将url恢复成原url
                             String rtspMsg = eventItem.msg;
-                            System.out.println("[Recv From Remote]==================================================\r\n" + rtspMsg);
+                            log.info("[Recv From Remote]==================================================\r\n" + rtspMsg);
                             int div_first = rtspMsg.indexOf("\r\n\r\n");
                             if (div_first < 0) {
                                 break;
@@ -291,7 +294,7 @@ public class RemoteRtspService {
                                         queueEvent.put(newEventItem);
                                     } catch(Exception e) {
                                     }
-                                    System.out.println("Redirect to new url:" + redirectUrl + "*******************************************");
+                                    log.info("Redirect to new url:" + redirectUrl + "*******************************************");
                                     if(connect(hsmpUrl.get("host"),Integer.parseInt(hsmpUrl.get("port")))) {
                                         sessionInfo.setRedirectUrl(redirectUrl);
                                         if(rtspReq != null) {
@@ -422,7 +425,7 @@ public class RemoteRtspService {
                                         */
                                     }
                                     try {
-                                        System.out.println("[Send To Remote]===========================================================\r\n" + rtspMsg);
+                                        log.info("[Send To Remote]===========================================================\r\n" + rtspMsg);
                                         socket.getOutputStream().write(rtspMsg.getBytes());
                                     } catch (Exception e) {
                                         EventItem newEventItem = new EventItem();
@@ -471,7 +474,7 @@ public class RemoteRtspService {
                 }
             } catch(Exception e) {
             } finally {
-                System.out.println("RemoteExecThread Is Down!");
+                log.info("RemoteExecThread Is Down!");
             }
         }
     }

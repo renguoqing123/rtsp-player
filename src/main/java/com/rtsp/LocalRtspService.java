@@ -5,11 +5,14 @@ import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Slf4j
 public class LocalRtspService {
     private static final String NULL_STRING = "";
     private static final byte[] NULL_BYTE = {};
@@ -78,13 +81,13 @@ public class LocalRtspService {
                                     + "\r\n";
                         }
                         rtspSession.sendMessage(new TextMessage(head + msg));
-                        System.out.println("[Send to RTSP Channel]--" + rtspSession.getId() + "==============================\r\n" + head + msg);
+                        log.info("[Send to RTSP Channel]--" + rtspSession.getId() + "==============================\r\n" + head + msg);
                     }
                 }
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            System.out.println("RtspSendThread is down!");
+            log.info("RtspSendThread is down!");
         }
     }
     public class RtpSendThread extends Thread {
@@ -99,7 +102,7 @@ public class LocalRtspService {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            System.out.println("RtpSendThread is down!");
+            log.info("RtpSendThread is down!");
         }
     }
     private String send_msg = "";
@@ -143,7 +146,7 @@ public class LocalRtspService {
     }
     public void sendMsg(String msg) {
         if(!msg.startsWith("RTSP")) {
-            System.out.println("=========================================[ERROR]" + msg.length() + "================================");
+            log.info("=========================================[ERROR]" + msg.length() + "================================");
         }
         try {
             queueRtspEvent.put(msg);

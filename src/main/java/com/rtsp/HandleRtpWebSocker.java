@@ -10,18 +10,21 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class HandleRtpWebSocker implements IHandleWebSocket {
 
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("Rtp Sesson start:" + session.getId());
-        System.out.println(session.getAcceptedProtocol());
+        log.info("Rtp Sesson start:" + session.getId());
+        log.info(session.getAcceptedProtocol());
     }
     public void handleTextMessage(WebSocketSession session, TextMessage message)  {
         SessionInfo sessionInfo = SessionInfo.get(session.getId());
         if(sessionInfo == null) {
             String str_msg = message.getPayload();
-            System.out.println("Recv from RTP session:[" + session.getId() + "]\r\n" + str_msg);
+            log.info("Recv from RTP session:[" + session.getId() + "]\r\n" + str_msg);
 
             List<String> lines = Utils.msg2lines(str_msg);
             HashMap<String,String> hsmpVal = Utils.list2key(lines, ":", 1);
@@ -45,7 +48,7 @@ public class HandleRtpWebSocker implements IHandleWebSocket {
                                 + "seq: " + seq + "\r\n"
                                 + "\r\n";
                         session.sendMessage(new TextMessage(s));
-                        System.out.println("[Send to RTP Channel]\r\n" + s);
+                        log.info("[Send to RTP Channel]\r\n" + s);
                         return;
                     }
                 }
@@ -69,7 +72,7 @@ public class HandleRtpWebSocker implements IHandleWebSocket {
         SessionInfo sessionInfo = SessionInfo.get(session.getId());
         if(sessionInfo != null) {
             SessionInfo.remove(session.getId());
-            System.out.println("RTP Sesson closed:" + session.getId());
+            log.info("RTP Sesson closed:" + session.getId());
         }
     }
 }
