@@ -23,7 +23,7 @@
 		</File>
 		<!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
 		<RollingRandomAccessFile name="RollingFileInfo" fileName="${LOG_HOME}/${FILE_NAME}-info.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-info-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<!--控制台只输出level及以上级别的信息，匹配（onMatch），其他的直接拒绝，不匹配（onMismatch） -->
 				<!-- onMatch=否认：DENY,接受：ACCEPT onMismatch=否认：DENY,接受：ACCEPT,中立：NEUTRAL-->
@@ -39,7 +39,7 @@
 			<DefaultRolloverStrategy max="20" />
 		</RollingRandomAccessFile>
 		<RollingRandomAccessFile name="RollingFileWarn" fileName="${LOG_HOME}/${FILE_NAME}-warn.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-warn-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL" /><!-- 想输出warn日志，禁止输出的error日志必须放上面 -->
 				<ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
@@ -54,7 +54,7 @@
 			<DefaultRolloverStrategy max="20" />
 		</RollingRandomAccessFile>
 		<RollingRandomAccessFile name="RollingFileError" fileName="${LOG_HOME}/${FILE_NAME}-error.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-error-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<!-- <ThresholdFilter level="FATAL" onMatch="DENY" onMismatch="NEUTRAL" /> -->
 				<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
@@ -68,7 +68,7 @@
 			<DefaultRolloverStrategy max="20" />
 		</RollingRandomAccessFile>
 		<RollingRandomAccessFile name="RollingFileDebug" fileName="${LOG_HOME}/${FILE_NAME}-debug.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-debug-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL" />
 				<ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
@@ -82,7 +82,7 @@
 			<DefaultRolloverStrategy max="20" />
 		</RollingRandomAccessFile>
 		<RollingRandomAccessFile name="RollingFileTrace" fileName="${LOG_HOME}/${FILE_NAME}-trace.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/trace-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-trace-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL" />
 				<ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY" />
@@ -97,8 +97,8 @@
 		</RollingRandomAccessFile>
 		
 		<!-- 具体包下日志打印 -->
-		<RollingRandomAccessFile name="RollingFileAll" fileName="${LOG_HOME}/${SOME_PACKAGE}-All.log"
-			filePattern="${LOG_HOME}/$${date:yyyy-MM}/all-%d{yyyy-MM-dd}-%i.log">
+		<RollingRandomAccessFile name="RollingFileAll" fileName="${LOG_HOME}/${SOME_PACKAGE}-all.log"
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${SOME_PACKAGE}-all-%d{yyyy-MM-dd}-%i.log">
 			<Filters>
 				<ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY" />
 			</Filters>
